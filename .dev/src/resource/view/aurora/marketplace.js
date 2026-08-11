@@ -45,14 +45,14 @@ const SWATCH_KEYS = ["bg", "surface", "text", "brand"];
 // LuCI cache-busts the resources it `require`s itself; this fetch is ours, so
 // it has to carry its own stamp. Same reason theme.js appends
 // ?v=TOKENS_ENGINE_VERSION to the token engine.
-const PRESETS_VERSION = "97884ace";
+const PRESETS_VERSION = "c8850811";
 
 // Filenames the theme package itself ships into
 // /www/luci-static/aurora/images. Nothing under one of these names is ever
 // uploaded: the receiving router already has those bytes, and an unmodified
 // slot means the user never customised it in the first place.
 //
-// The first five are the asset slots' factory defaults; the last four are the
+// The first six are the asset slots' factory defaults; the last four are the
 // icons header.ut's default floating toolbar points at, which matters now that
 // shortcut icons travel with a config -- a shortcut pointing at overview.svg
 // needs no upload at all, and letting it consume a toolbar_icon_<k> slot
@@ -66,6 +66,7 @@ const THEME_SHIPPED_NAMES = [
   "app-icon-192x192.png",
   "app-icon-512x512.png",
   "apple-touch-icon.png",
+  "background.png",
   "network.svg",
   "overview.svg",
   "software.svg",
@@ -154,6 +155,9 @@ const NAV_TYPE_LABELS = {
 // labels reuse the exact msgids the old preset dropdown used, so existing
 // translations keep working.
 const BUILTIN_PRESETS = [
+  // A bare string, not _(...): "ShiranekoWrt" is a proper noun and every new
+  // msgid would need a po entry for the po-format checks to stay green.
+  { id: "shiranekowrt", label: "ShiranekoWrt" },
   { id: "default", label: _("Default") },
   { id: "monochrome", label: _("Monochrome") },
   { id: "sage-green", label: _("Sage Green") },
@@ -164,7 +168,7 @@ const BUILTIN_PRESETS = [
 // Official hub seeds mirror the built-in presets ("Default · 默认" by
 // "Aurora", ...). Until the hub exposes a builtin_id field, hide them by the
 // only stable signal they carry so the same theme never shows up twice.
-const BUILTIN_SEED_RE = /^(Default|Sage Green|Amber Sand|Monochrome|Sky Blue)\b/;
+const BUILTIN_SEED_RE = /^(ShiranekoWrt|Default|Sage Green|Amber Sand|Monochrome|Sky Blue)\b/;
 const isBuiltinSeed = (item) =>
   (item && item.author) === "Aurora" && BUILTIN_SEED_RE.test(item.name || "");
 

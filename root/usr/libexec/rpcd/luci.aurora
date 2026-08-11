@@ -21,6 +21,7 @@ readonly MAX_SHARED_TOOLBAR_ICONS=12
 readonly TMP_UPLOAD_PATH="/tmp/aurora_icon.tmp"
 readonly CONFIG_FILE="/etc/config/aurora"
 readonly DEFAULT_TEMPLATE="/usr/share/aurora/default.template"
+readonly SHIRANEKOWRT_TEMPLATE="/usr/share/aurora/shiranekowrt.template"
 readonly SAGE_GREEN_TEMPLATE="/usr/share/aurora/sage-green.template"
 readonly AMBER_SAND_TEMPLATE="/usr/share/aurora/amber-sand.template"
 readonly MONOCHROME_TEMPLATE="/usr/share/aurora/monochrome.template"
@@ -203,6 +204,7 @@ record_active_source() {  # $1=builtin:<id> | hub:<id>
 resolve_preset_path() {
 	case "$(normalize_preset_name "$1")" in
 	default) echo "$DEFAULT_TEMPLATE" ;;
+	shiranekowrt) echo "$SHIRANEKOWRT_TEMPLATE" ;;
 	sage-green) echo "$SAGE_GREEN_TEMPLATE" ;;
 	amber-sand) echo "$AMBER_SAND_TEMPLATE" ;;
 	monochrome) echo "$MONOCHROME_TEMPLATE" ;;
@@ -1291,14 +1293,14 @@ shared_custom_font_base() {  # $1=slot
 # so sharing them would upload a file the receiver already has -- and, worse,
 # the receiver would get the AUTHOR's copy landed under a hub-* name while
 # their own shipped file sat unused.
-# The first five are the asset slots' factory defaults; the last four are the
+# The first six are the asset slots' factory defaults; the last four are the
 # icons header.ut's default floating toolbar points at. Both groups are
 # "present on every install", which is the only property this predicate is
 # about. Duplicated in marketplace.js as THEME_SHIPPED_NAMES --
 # tests/marketplace-view.test.mjs asserts the two stay identical.
 is_theme_shipped_image() {  # $1=filename
 	case "$1" in
-	logo.svg|favicon.ico|app-icon-192x192.png|app-icon-512x512.png|apple-touch-icon.png) return 0 ;;
+	logo.svg|favicon.ico|app-icon-192x192.png|app-icon-512x512.png|apple-touch-icon.png|background.png) return 0 ;;
 	network.svg|overview.svg|software.svg|system.svg) return 0 ;;
 	esac
 	return 1

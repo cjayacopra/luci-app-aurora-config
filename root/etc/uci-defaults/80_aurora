@@ -2,6 +2,7 @@
 
 readonly CONF_FILE="/etc/config/aurora"
 readonly DEFAULT_TEMPLATE="/usr/share/aurora/default.template"
+readonly SHIRANEKOWRT_TEMPLATE="/usr/share/aurora/shiranekowrt.template"
 readonly SAGE_GREEN_TEMPLATE="/usr/share/aurora/sage-green.template"
 readonly AMBER_SAND_TEMPLATE="/usr/share/aurora/amber-sand.template"
 readonly MONOCHROME_TEMPLATE="/usr/share/aurora/monochrome.template"
@@ -75,27 +76,40 @@ migrate_structure_keys() {
 # version does not match: rather than migrating individual keys, the entire
 # config is overwritten so no stale options survive.
 migrate_color_schema() {
-    local template="$1" stored
+	local template="$1" stored preset_id
 
-    stored=$(uci -q get aurora.theme.config_version)
-    [ "$stored" = "$SCHEMA_VERSION" ] && return 0
+	stored=$(uci -q get aurora.theme.config_version)
+	[ "$stored" = "$SCHEMA_VERSION" ] && return 0
 
-    log "Schema changed (was '${stored:-unset}'); resetting config to template defaults"
-    if cp "$template" "$CONF_FILE"; then
-        chmod 644 "$CONF_FILE"
-        uci -q set aurora.theme.config_version="$SCHEMA_VERSION"
-        uci -q commit aurora
-        log "Config reset to schema v$SCHEMA_VERSION complete"
-    else
-        log "Config reset failed; leaving existing config untouched"
-    fi
+	preset_id="${template##*/}"
+	preset_id="${preset_id%.template}"
+
+	log "Schema changed (was '${stored:-unset}'); resetting config to template defaults"
+	if cp "$template" "$CONF_FILE"; then
+		chmod 644 "$CONF_FILE"
+		uci -q set aurora.theme.config_version="$SCHEMA_VERSION"
+		# The config now IS the template, so the store must pin that preset's
+		# card again -- refresh active_preset and drop the recorded
+		# source/fingerprint so get_init_data's ensure_active_source
+		# re-derives them. Keeping the old source would leave the tick on the
+		# pre-reset card while the config has already been overwritten.
+		uci -q set aurora.theme.active_preset="$preset_id"
+		uci -q delete aurora.theme.active_source
+		uci -q delete aurora.theme.active_fingerprint
+		uci -q commit aurora
+		log "Config reset to schema v$SCHEMA_VERSION complete"
+	else
+		log "Config reset failed; leaving existing config untouched"
+	fi
 }
 
 main() {
     log "Initializing Aurora theme configuration"
 
     template=""
-    if [ -f "$DEFAULT_TEMPLATE" ]; then
+    if [ -f "$SHIRANEKOWRT_TEMPLATE" ]; then
+        template="$SHIRANEKOWRT_TEMPLATE"
+    elif [ -f "$DEFAULT_TEMPLATE" ]; then
         template="$DEFAULT_TEMPLATE"
     elif [ -f "$SAGE_GREEN_TEMPLATE" ]; then
         template="$SAGE_GREEN_TEMPLATE"
@@ -108,14 +122,24 @@ main() {
     fi
 
     if [ -z "$template" ]; then
-        log "Template missing: $DEFAULT_TEMPLATE, $SAGE_GREEN_TEMPLATE, $AMBER_SAND_TEMPLATE, $MONOCHROME_TEMPLATE, $SKY_BLUE_TEMPLATE"
+        log "Template missing: $SHIRANEKOWRT_TEMPLATE, $DEFAULT_TEMPLATE, $SAGE_GREEN_TEMPLATE, $AMBER_SAND_TEMPLATE, $MONOCHROME_TEMPLATE, $SKY_BLUE_TEMPLATE"
         exit 0
     fi
+
+    # The template was picked by the chain above; record its preset id so the
+    # store's "In use" tick lands on the right card. get_init_data calls
+    # ensure_active_source when active_source is empty, and that defaults an
+    # unset active_preset to "default" (normalize_preset_name on an empty
+    # value) -- so without this, a shiranekowrt-seeded install would be
+    # flagged as the "Default" preset.
+    preset_id="${template##*/}"
+    preset_id="${preset_id%.template}"
 
     if [ ! -f "$CONF_FILE" ]; then
         if cp "$template" "$CONF_FILE"; then
             chmod 644 "$CONF_FILE"
             uci -q set aurora.theme.config_version="$SCHEMA_VERSION"
+            uci -q set aurora.theme.active_preset="$preset_id"
             uci -q commit aurora
             log "First-time initialization: Config created from template at schema v$SCHEMA_VERSION"
         else

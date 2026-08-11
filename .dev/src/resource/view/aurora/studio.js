@@ -24,7 +24,7 @@ const FEED_NOTICE_KEY = "aurora.feed_notice_dismissed";
 // scripts/sync-tokens.mjs, verified by tests/theme-token-sync.test.mjs.
 // Appended as ?v= when loading utils/tokens.global.js so the browser never
 // pairs this file with an HTTP-cached engine from a previous release.
-const TOKENS_ENGINE_VERSION = "2.0.0";
+const TOKENS_ENGINE_VERSION = "3.0.0";
 
 const loadGlobalScript = (src, version) =>
   new Promise((resolve, reject) => {

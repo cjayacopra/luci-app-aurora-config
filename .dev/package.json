@@ -13,7 +13,7 @@
     "gen-font-presets": "node scripts/gen-font-presets.mjs"
   },
   "devDependencies": {
-    "@eamonxg/luci-theme-tokens": "2.0.0",
+    "@eamonxg/luci-theme-tokens": "3.0.0",
     "terser": "^5.43.1"
   }
 }

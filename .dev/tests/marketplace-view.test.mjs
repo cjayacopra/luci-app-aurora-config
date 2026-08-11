@@ -674,8 +674,8 @@ test("share manifest skips exactly the filenames the theme itself ships", async 
 
   // A test comparing two empty arrays would pass while proving nothing --
   // make sure both captures actually found the names.
-  assert.equal(shellNames.length, 9, "shell-side capture did not find 9 names");
-  assert.equal(jsNames.length, 9, "js-side capture did not find 9 names");
+  assert.equal(shellNames.length, 10, "shell-side capture did not find 10 names");
+  assert.equal(jsNames.length, 10, "js-side capture did not find 10 names");
 
   assert.deepEqual(
     jsNames,

@@ -254,6 +254,75 @@
           "enabled": "1"
         }
       ]
+    },
+    "shiranekowrt": {
+      "colors": {
+        "light_bg": "#f2ecbc",
+        "light_surface": "#e7dba0",
+        "light_text": "#545464",
+        "light_brand": "#4d699b",
+        "dark_bg": "#181616",
+        "dark_surface": "#282727",
+        "dark_text": "#c5c9c5",
+        "dark_brand": "#8ba4b0"
+      },
+      "layout": {
+        "nav_type": "mega-menu",
+        "struct_spacing": "0.3rem",
+        "struct_radius_base": "0.625rem",
+        "struct_content_width_centered": "92rem",
+        "toolbar_enabled": "1"
+      },
+      "typography": {
+        "struct_font_sans": "\"Nunito\", \"Lato\", ui-sans-serif, system-ui, sans-serif",
+        "struct_font_mono": "\"Maple Mono\", ui-monospace, \"SF Mono\", Menlo, Monaco, Consolas, monospace",
+        "font_sans": "nunito",
+        "font_mono": "maple-mono"
+      },
+      "toolbar": [
+        {
+          "title": "Network",
+          "url": "/cgi-bin/luci/admin/network/network",
+          "icon": "network.svg",
+          "enabled": "1"
+        },
+        {
+          "title": "WiFi",
+          "url": "/cgi-bin/luci/admin/network/wireless",
+          "icon": "wifi.svg",
+          "enabled": "1"
+        },
+        {
+          "title": "Modemdata",
+          "url": "/cgi-bin/luci/admin/modem/modemdata",
+          "icon": "5G.svg",
+          "enabled": "1"
+        },
+        {
+          "title": "QModem",
+          "url": "/cgi-bin/luci/admin/modem/qmodem",
+          "icon": "QModem.svg",
+          "enabled": "1"
+        },
+        {
+          "title": "Xray",
+          "url": "/cgi-bin/luci/admin/services/xray_core",
+          "icon": "xray.svg",
+          "enabled": "1"
+        },
+        {
+          "title": "Bandix",
+          "url": "/cgi-bin/luci/admin/network/bandix",
+          "icon": "stats.svg",
+          "enabled": "1"
+        },
+        {
+          "title": "GHFU",
+          "url": "/cgi-bin/luci/admin/system/ghfu",
+          "icon": "update.svg",
+          "enabled": "1"
+        }
+      ]
     }
   }
 }

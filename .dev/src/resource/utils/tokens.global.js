@@ -1,5 +1,5 @@
 /**
- * @eamonxg/luci-theme-tokens v2.0.0 -- GENERATED, DO NOT EDIT.
+ * @eamonxg/luci-theme-tokens v3.0.0 -- GENERATED, DO NOT EDIT.
  * Aurora design-token engine (browser global). Built from aurora/spec.js +
  * aurora/defaults.js + operators.js by build.mjs. Depends on the global
  * `Color` (utils/color.global.js in luci-app-aurora-config); load that first.
@@ -23,7 +23,7 @@ var AuroraTokens = (() => {
   };
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-  // global.js
+  // ../../luci-theme-tokens/global.js
   var global_exports = {};
   __export(global_exports, {
     DEFAULTS: () => DEFAULTS,
@@ -33,17 +33,21 @@ var AuroraTokens = (() => {
     resolve: () => resolve
   });
 
-  // aurora/spec.js
+  // ../../luci-theme-tokens/aurora/spec.js
   var DERIVATIONS = {
     light: {
       text_muted: ["mix", "text", "bg", 0.62],
       text_subtle: ["mix", "text", "bg", 0.48],
-      // Recessed fills need chroma ABOVE bg's (set, not shade): at these sizes a
-      // bg-inherited tint reads as dirty grey against the pure-white cards.
-      surface_sunken: ["set", "bg", 0.975, 5e-3],
+      // Recessed fills need chroma ABOVE bg's (setguard, not shade): at these
+      // sizes a bg-inherited tint reads as dirty grey against the pure-white
+      // cards. setguard keeps set's absolute tone on a near-white page, but pins
+      // the fill at least `guard` below its OWN canvas: on a saturated light
+      // canvas (cream paper, shiranekowrt preset L 0.936) the absolute 0.975 /
+      // 0.95 would land LIGHTER than the canvas and read as a white patch.
+      surface_sunken: ["setguard", "bg", 0.975, 5e-3, 9e-3],
       surface_overlay: ["shade", "bg", 0.016],
       hairline: ["alpha", "text", 0.13],
-      hover_faint: ["set", "bg", 0.95, 6e-3],
+      hover_faint: ["setguard", "bg", 0.95, 6e-3, 0.034],
       brand_hover: ["shade", "brand", -0.06],
       brand_subtle: ["mix", "brand", "bg", 0.12],
       brand_subtle_hover: ["shade", "brand_subtle", -0.04],
@@ -67,7 +71,9 @@ var AuroraTokens = (() => {
       // panel read as one continuous surface.
       // Relight 2026-07: a cool snow step BELOW bg — anything brighter read as
       // paper-white against the dimmed page; extra chroma keeps it icy.
-      mega_menu_bg: ["set", "bg", 0.972, 8e-3],
+      // setguard (guard 0.012) keeps the panel below ANY light canvas, so a
+      // saturated cream page can't show a lighter-than-page panel either.
+      mega_menu_bg: ["setguard", "bg", 0.972, 8e-3, 0.012],
       // Mega-menu curtain: a real dimming layer. A near-page-light grey (the
       // earlier #e8e8ed attempt) only blurred without darkening, so the mask read
       // as absent. Black at a modest alpha actually dims the page; the now-opaque
@@ -112,7 +118,7 @@ var AuroraTokens = (() => {
     }
   };
 
-  // aurora/defaults.js
+  // ../../luci-theme-tokens/aurora/defaults.js
   var DEFAULTS = {
     light: {
       bg: "oklch(0.984 0.004 235)",
@@ -142,10 +148,10 @@ var AuroraTokens = (() => {
     }
   };
 
-  // shim-color-global.js
+  // ../../luci-theme-tokens/shim-color-global.js
   var shim_color_global_default = globalThis.Color;
 
-  // operators.js
+  // ../../luci-theme-tokens/operators.js
   var C = (v) => v instanceof shim_color_global_default ? v : new shim_color_global_default(v);
   var mix = (a, b, p) => shim_color_global_default.mix(C(a), C(b), 1 - p, { space: "oklab", outputSpace: "oklch" });
   var shade = (a, dl) => {
@@ -160,6 +166,13 @@ var AuroraTokens = (() => {
     c.coords[1] = achromatic ? 0 : Ch;
     return c;
   };
+  var setguard = (a, L, Ch, guard) => {
+    const c = C(a).to("oklch");
+    const achromatic = c.coords[1] < 1e-3 || Number.isNaN(c.coords[2]);
+    c.coords[0] = Math.min(L, c.coords[0] - guard);
+    c.coords[1] = achromatic ? 0 : Math.max(c.coords[1], Ch);
+    return c;
+  };
   var alpha = (a, p) => {
     const c = C(a).to("oklch");
     c.alpha = p;
@@ -168,7 +181,7 @@ var AuroraTokens = (() => {
   var konst = (s) => C(s).to("oklch");
   var toOklch = (v) => C(v).to("oklch").toString({ precision: 4, format: "oklch" });
 
-  // resolve.js
+  // ../../luci-theme-tokens/resolve.js
   function createResolver(derivations) {
     return function resolveTokens2(mode, inputs) {
       const derivs = derivations[mode];
@@ -193,6 +206,9 @@ var AuroraTokens = (() => {
           case "set":
             color = set(ref(args[0]), args[1], args[2]);
             break;
+          case "setguard":
+            color = setguard(ref(args[0]), args[1], args[2], args[3]);
+            break;
           case "alpha":
             color = alpha(ref(args[0]), args[1]);
             break;
@@ -213,7 +229,7 @@ var AuroraTokens = (() => {
     };
   }
 
-  // aurora/presets.js
+  // ../../luci-theme-tokens/aurora/presets.js
   var statusKeys = ["info", "warning", "success", "danger"];
   var STATUS = {
     light: Object.fromEntries(statusKeys.map((k) => [k, DEFAULTS.light[k]])),
@@ -303,13 +319,43 @@ var AuroraTokens = (() => {
         link: "oklch(0.6692 0.1607 245.0110)",
         ...STATUS.dark
       }
+    },
+    // ShiranekoWrt: a Kanagawa Lotus wash -- cream paper canvas with warm
+    // recessed fills. The saturated light canvas (C 0.0625) is exactly what
+    // setguard's lightness floor exists for: the absolute light-rule tones would
+    // land LIGHTER than this canvas and read as white patches.
+    shiranekowrt: {
+      light: {
+        bg: "oklch(0.9360 0.0625 101.5859)",
+        surface: "oklch(0.8871 0.0773 98.0044)",
+        text: "oklch(0.4519 0.0259 285.3160)",
+        brand: "oklch(0.5211 0.0862 261.4868)",
+        on_brand: "oklch(0.9360 0.0625 101.5859)",
+        link: "oklch(0.5211 0.0862 261.4868)",
+        info: "oklch(0.5519 0.0399 229.0946)",
+        warning: "oklch(0.7187 0.1628 63.8252)",
+        success: "oklch(0.5951 0.0889 128.2578)",
+        danger: "oklch(0.5976 0.2269 27.6489)"
+      },
+      dark: {
+        bg: "oklch(0.2025 0.0032 17.4209)",
+        surface: "oklch(0.2738 0.0015 17.2468)",
+        text: "oklch(0.8316 0.0070 145.5122)",
+        brand: "oklch(0.7035 0.0330 228.4233)",
+        on_brand: "oklch(0.2025 0.0032 17.4209)",
+        link: "oklch(0.7035 0.0330 228.4233)",
+        info: "oklch(0.5978 0.0428 228.3344)",
+        warning: "oklch(0.7827 0.1579 61.6833)",
+        success: "oklch(0.7477 0.1125 128.3621)",
+        danger: "oklch(0.5976 0.2269 27.6489)"
+      }
     }
   };
 
-  // aurora/index.js
+  // ../../luci-theme-tokens/aurora/index.js
   var resolveTokens = createResolver(DERIVATIONS);
 
-  // global.js
+  // ../../luci-theme-tokens/global.js
   var INPUTS = Object.keys(DEFAULTS.light);
   var DERIVED_KEYS = Object.keys(DERIVATIONS.light);
   var resolve = resolveTokens;

@@ -21,7 +21,16 @@ const repoRoot = path.resolve(
 
 const read = (rel) => readFileSync(path.join(repoRoot, rel), "utf8");
 
-const PRESET_IDS = ["default", "sage-green", "amber-sand", "monochrome", "sky-blue"];
+const PRESET_IDS = ["default", "shiranekowrt", "sage-green", "amber-sand", "monochrome", "sky-blue"];
+
+// Distinct sans stacks in the roster: six presets share five faces, so the
+// "presets span the roster" check below tracks the conf, not the preset count.
+const SANS_ROSTER_SIZE = new Set(
+  read("root/usr/share/aurora/font-presets.conf")
+    .split("\n")
+    .filter((line) => line.startsWith("font|sans|"))
+    .map((line) => line.split("|")[6]),
+).size;
 
 // Duplicated from PRESET_STRUCT_KEYS in root/usr/libexec/rpcd/luci.aurora and
 // from LAYOUT_KEYS/TYPOGRAPHY_KEYS in scripts/gen-presets.mjs. A test below
@@ -150,14 +159,22 @@ test("preset structure values stay inside the bounds the hub path enforces", () 
 // The whole point of the change. Colour-only presets were five paint jobs on
 // one layout; if a new preset ships without pulling any other lever, the store
 // is back to selling hues.
-test("the five presets are five different looks, not five palettes", () => {
+test("the built-in presets are different looks, not different palettes", () => {
   const structs = PRESET_IDS.map(structOf);
 
   const distinct = (key) => new Set(structs.map((s) => s[key])).size;
 
   assert.ok(distinct("nav_type") >= 3, "all three navigation shapes should be on offer");
-  assert.equal(distinct("struct_radius_base"), 5, "every preset should own its corner radius");
-  assert.equal(distinct("struct_font_sans"), 5, "every preset should own its sans typeface");
+  assert.equal(
+    distinct("struct_radius_base"),
+    PRESET_IDS.length,
+    "every preset should own its corner radius",
+  );
+  assert.equal(
+    distinct("struct_font_sans"),
+    SANS_ROSTER_SIZE,
+    "the presets should span the whole sans roster",
+  );
   assert.ok(distinct("struct_spacing") >= 3, "all three spacing stops should be on offer");
   assert.ok(distinct("struct_content_width_centered") >= 3, "content width should vary");
   assert.equal(distinct("toolbar_enabled"), 2, "at least one preset should turn the toolbar off");
