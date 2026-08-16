@@ -20,14 +20,17 @@ width, typefaces, the toolbar switch), all written together by
 
 ### 1.1 The palette
 
-Light mode is Kanagawa Lotus turned into a cream-paper page. The inputs are
-worth reading in pairs, because the cream is the load-bearing choice:
+Light mode is Kanagawa Lotus turned into a cream-paper page; dark mode keeps
+the Kanagawa Dragon canvas (warm ink-black) but swaps the near-white Dragon
+foreground for the classic Kanagawa fujiWhite, the warm cream the palette is
+known for. The inputs are worth reading in pairs, because the cream is the
+load-bearing choice:
 
 | Token | Light | Dark |
 | --- | --- | --- |
 | `bg` | `#f2ecbc` (cream paper) | `#181616` (ink) |
 | `surface` | `#e7dba0` | `#282727` |
-| `text` | `#545464` | `#c5c9c5` |
+| `text` | `#545464` | `#dcd7ba` (fujiWhite) |
 | `brand` | `#4d699b` | `#8ba4b0` |
 | `on_brand` | `#f2ecbc` | `#181616` |
 | `link` | `#4d699b` | `#8ba4b0` |
@@ -43,8 +46,16 @@ The structural block in `root/usr/share/aurora/shiranekowrt.template`:
 
 - **Typefaces** — `struct_font_sans '"Nunito", "Lato", ui-sans-serif, …'`,
   `struct_font_mono '"Maple Mono", ui-monospace, …'`.
-- **Spacing** `0.3rem`; **content width** `92rem`; **corner radius**
-  `0.625rem`; **nav shape** `mega-menu`; **toolbar on**.
+- **Spacing** `0.25rem`; **content width** `92rem`; **corner radius**
+  `0.625rem`; **nav shape** `sidebar`; **toolbar on**.
+
+The nav shape is the load-bearing choice here, the way the cream is in the
+palette. A sidebar is the shell for a daily-driver dashboard: the rail sits in
+view on every page, its first column already spends the horizontal margin, and
+the content runs full-width. That is also why the spacing scale came down a
+stop (`0.3rem` → `0.25rem`): the loose stop needs a centred layout with a wide
+content column to breathe, and the sidebar shell has none — the test suite
+enforces exactly that rule (§4A's spacing test).
 - **A shared background** — both `struct_login_bg` and `struct_main_bg` point
   at `url('/luci-static/aurora/images/background.png')`: one wallpaper for the
   login page and the main interface.

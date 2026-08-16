@@ -23,7 +23,7 @@ var AuroraTokens = (() => {
   };
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-  // ../../luci-theme-tokens/global.js
+  // global.js
   var global_exports = {};
   __export(global_exports, {
     DEFAULTS: () => DEFAULTS,
@@ -33,7 +33,7 @@ var AuroraTokens = (() => {
     resolve: () => resolve
   });
 
-  // ../../luci-theme-tokens/aurora/spec.js
+  // aurora/spec.js
   var DERIVATIONS = {
     light: {
       text_muted: ["mix", "text", "bg", 0.62],
@@ -118,7 +118,7 @@ var AuroraTokens = (() => {
     }
   };
 
-  // ../../luci-theme-tokens/aurora/defaults.js
+  // aurora/defaults.js
   var DEFAULTS = {
     light: {
       bg: "oklch(0.984 0.004 235)",
@@ -148,10 +148,10 @@ var AuroraTokens = (() => {
     }
   };
 
-  // ../../luci-theme-tokens/shim-color-global.js
+  // shim-color-global.js
   var shim_color_global_default = globalThis.Color;
 
-  // ../../luci-theme-tokens/operators.js
+  // operators.js
   var C = (v) => v instanceof shim_color_global_default ? v : new shim_color_global_default(v);
   var mix = (a, b, p) => shim_color_global_default.mix(C(a), C(b), 1 - p, { space: "oklab", outputSpace: "oklch" });
   var shade = (a, dl) => {
@@ -181,7 +181,7 @@ var AuroraTokens = (() => {
   var konst = (s) => C(s).to("oklch");
   var toOklch = (v) => C(v).to("oklch").toString({ precision: 4, format: "oklch" });
 
-  // ../../luci-theme-tokens/resolve.js
+  // resolve.js
   function createResolver(derivations) {
     return function resolveTokens2(mode, inputs) {
       const derivs = derivations[mode];
@@ -229,7 +229,7 @@ var AuroraTokens = (() => {
     };
   }
 
-  // ../../luci-theme-tokens/aurora/presets.js
+  // aurora/presets.js
   var statusKeys = ["info", "warning", "success", "danger"];
   var STATUS = {
     light: Object.fromEntries(statusKeys.map((k) => [k, DEFAULTS.light[k]])),
@@ -340,7 +340,7 @@ var AuroraTokens = (() => {
       dark: {
         bg: "oklch(0.2025 0.0032 17.4209)",
         surface: "oklch(0.2738 0.0015 17.2468)",
-        text: "oklch(0.8316 0.0070 145.5122)",
+        text: "oklch(0.8755 0.0391 99.0857)",
         brand: "oklch(0.7035 0.0330 228.4233)",
         on_brand: "oklch(0.2025 0.0032 17.4209)",
         link: "oklch(0.7035 0.0330 228.4233)",
@@ -352,10 +352,10 @@ var AuroraTokens = (() => {
     }
   };
 
-  // ../../luci-theme-tokens/aurora/index.js
+  // aurora/index.js
   var resolveTokens = createResolver(DERIVATIONS);
 
-  // ../../luci-theme-tokens/global.js
+  // global.js
   var INPUTS = Object.keys(DEFAULTS.light);
   var DERIVED_KEYS = Object.keys(DERIVATIONS.light);
   var resolve = resolveTokens;

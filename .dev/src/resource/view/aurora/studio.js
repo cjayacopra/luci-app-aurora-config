@@ -2488,7 +2488,7 @@ return view.extend({
           "display: flex; flex-wrap: wrap; gap: 1em; align-items: center;",
       },
       [
-        E("span", { style: "white-space: nowrap;" }, [
+        E("span", { style: "white-space: nowrap; color: var(--text);" }, [
           document.createTextNode(_("Theme: ")),
           E(
             "span",
@@ -2499,7 +2499,7 @@ return view.extend({
             `v${themeVersion}`,
           ),
         ]),
-        E("span", { style: "white-space: nowrap;" }, [
+        E("span", { style: "white-space: nowrap; color: var(--text);" }, [
           document.createTextNode(_("Config: ")),
           E(
             "span",

@@ -263,12 +263,12 @@
         "light_brand": "#4d699b",
         "dark_bg": "#181616",
         "dark_surface": "#282727",
-        "dark_text": "#c5c9c5",
+        "dark_text": "#dcd7ba",
         "dark_brand": "#8ba4b0"
       },
       "layout": {
-        "nav_type": "mega-menu",
-        "struct_spacing": "0.3rem",
+        "nav_type": "sidebar",
+        "struct_spacing": "0.25rem",
         "struct_radius_base": "0.625rem",
         "struct_content_width_centered": "92rem",
         "toolbar_enabled": "1"
