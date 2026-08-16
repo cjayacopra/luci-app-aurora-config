@@ -42,8 +42,12 @@ const pinnedVersion = () =>
     .devDependencies[PACKAGE];
 
 const buildCheckout = (checkout) => {
+  // Pin the build's cwd to the checkout: esbuild annotates each bundled module
+  // with a path relative to process.cwd(), so an inherited cwd would make the
+  // vendored tokens.global.js differ between invocations (repo root vs .dev/).
   const built = spawnSync(process.execPath, [resolve(checkout, "build.mjs")], {
     stdio: "inherit",
+    cwd: checkout,
   });
   if (built.status !== 0)
     throw new Error(`building ${checkout} failed -- run \`npm install\` there first`);
