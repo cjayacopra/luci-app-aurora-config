@@ -68,6 +68,13 @@ config aurora 'theme'
 	option struct_radius_base '0.625rem'
 	option nav_type 'sidebar'
 	option toolbar_enabled '1'
+	option icon_cache_version '0'
+	option logo_svg 'logo.svg'
+	option favicon_png ''
+	option favicon_ico 'favicon.ico'
+	option pwa_apple_touch 'apple-touch-icon.png'
+	option pwa_icon_192 'app-icon-192x192.png'
+	option pwa_icon_512 'app-icon-512x512.png'
 	option struct_login_bg "url('/luci-static/aurora/images/background.png')"
 	option struct_main_bg "url('/luci-static/aurora/images/background.png')"
 	option struct_login_bg_alpha '50%'
