@@ -109,7 +109,7 @@ PRESET_SNAPSHOT=""
 # validate_and_apply_hub_payload accepts from a shared configuration. Keeping
 # the two lists identical is what makes "apply this theme" mean the same thing
 # whether the theme came off the disk or off the hub.
-readonly PRESET_STRUCT_KEYS="nav_type toolbar_enabled struct_spacing struct_radius_base struct_content_width_centered struct_font_sans struct_font_mono"
+readonly PRESET_STRUCT_KEYS="nav_type toolbar_enabled struct_spacing struct_radius_base struct_content_width_centered struct_font_sans struct_font_mono struct_main_bg_alpha struct_main_bg_blur struct_main_bg_scrim struct_login_bg_alpha struct_login_bg_blur struct_login_bg_scrim"
 
 normalize_preset_name() {
 	local name="${1:-default}"
@@ -271,6 +271,10 @@ load_preset_struct_snapshot() {
 		struct_content_width_centered) width="$value" ;;
 		struct_font_sans) font_sans="$value" ;;
 		struct_font_mono) font_mono="$value" ;;
+		struct_main_bg_alpha|struct_login_bg_alpha|struct_main_bg_blur|struct_login_bg_blur|struct_main_bg_scrim|struct_login_bg_scrim)
+			# Same bounds the hub path enforces on an inbound configuration
+			# (is_valid_main_bg_value): alpha 50-100%, blur 0-40px, scrim 0-70%.
+			is_valid_main_bg_value "$key" "$value" || return 1 ;;
 		esac
 	done <<-EOF
 	$snapshot
@@ -2909,7 +2913,7 @@ json_add_theme_preset_snapshot() {
 	json_add_object "layout"
 	while IFS='=' read -r key value; do
 		case "$key" in
-		nav_type|toolbar_enabled|struct_spacing|struct_radius_base|struct_content_width_centered)
+		nav_type|toolbar_enabled|struct_spacing|struct_radius_base|struct_content_width_centered|struct_main_bg_alpha|struct_main_bg_blur|struct_main_bg_scrim|struct_login_bg_alpha|struct_login_bg_blur|struct_login_bg_scrim)
 			json_add_string "$key" "$value" ;;
 		esac
 	done <<-EOF

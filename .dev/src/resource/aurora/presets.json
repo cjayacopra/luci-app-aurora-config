@@ -16,7 +16,13 @@
         "struct_spacing": "0.25rem",
         "struct_radius_base": "0.5rem",
         "struct_content_width_centered": "80rem",
-        "toolbar_enabled": "1"
+        "toolbar_enabled": "1",
+        "struct_main_bg_alpha": "67%",
+        "struct_main_bg_blur": "20px",
+        "struct_main_bg_scrim": "20%",
+        "struct_login_bg_alpha": "100%",
+        "struct_login_bg_blur": "0px",
+        "struct_login_bg_scrim": "0%"
       },
       "typography": {
         "struct_font_sans": "\"Lato\", ui-sans-serif, system-ui, sans-serif",
@@ -67,7 +73,13 @@
         "struct_spacing": "0.3rem",
         "struct_radius_base": "0.875rem",
         "struct_content_width_centered": "92rem",
-        "toolbar_enabled": "1"
+        "toolbar_enabled": "1",
+        "struct_main_bg_alpha": "67%",
+        "struct_main_bg_blur": "20px",
+        "struct_main_bg_scrim": "20%",
+        "struct_login_bg_alpha": "100%",
+        "struct_login_bg_blur": "0px",
+        "struct_login_bg_scrim": "0%"
       },
       "typography": {
         "struct_font_sans": "\"Nunito\", \"Lato\", ui-sans-serif, system-ui, sans-serif",
@@ -118,7 +130,13 @@
         "struct_spacing": "0.25rem",
         "struct_radius_base": "0.375rem",
         "struct_content_width_centered": "96rem",
-        "toolbar_enabled": "0"
+        "toolbar_enabled": "0",
+        "struct_main_bg_alpha": "67%",
+        "struct_main_bg_blur": "20px",
+        "struct_main_bg_scrim": "20%",
+        "struct_login_bg_alpha": "100%",
+        "struct_login_bg_blur": "0px",
+        "struct_login_bg_scrim": "0%"
       },
       "typography": {
         "struct_font_sans": "\"Space Grotesk\", \"Lato\", ui-sans-serif, system-ui, sans-serif",
@@ -169,7 +187,13 @@
         "struct_spacing": "0.2rem",
         "struct_radius_base": "0rem",
         "struct_content_width_centered": "88rem",
-        "toolbar_enabled": "0"
+        "toolbar_enabled": "0",
+        "struct_main_bg_alpha": "67%",
+        "struct_main_bg_blur": "20px",
+        "struct_main_bg_scrim": "20%",
+        "struct_login_bg_alpha": "100%",
+        "struct_login_bg_blur": "0px",
+        "struct_login_bg_scrim": "0%"
       },
       "typography": {
         "struct_font_sans": "\"Geist Sans\", \"Lato\", ui-sans-serif, system-ui, sans-serif",
@@ -220,7 +244,13 @@
         "struct_spacing": "0.25rem",
         "struct_radius_base": "0.75rem",
         "struct_content_width_centered": "80rem",
-        "toolbar_enabled": "1"
+        "toolbar_enabled": "1",
+        "struct_main_bg_alpha": "67%",
+        "struct_main_bg_blur": "20px",
+        "struct_main_bg_scrim": "20%",
+        "struct_login_bg_alpha": "100%",
+        "struct_login_bg_blur": "0px",
+        "struct_login_bg_scrim": "0%"
       },
       "typography": {
         "struct_font_sans": "system-ui, -apple-system, \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
@@ -271,7 +301,13 @@
         "struct_spacing": "0.25rem",
         "struct_radius_base": "0.625rem",
         "struct_content_width_centered": "92rem",
-        "toolbar_enabled": "1"
+        "toolbar_enabled": "1",
+        "struct_main_bg_alpha": "50%",
+        "struct_main_bg_blur": "20px",
+        "struct_main_bg_scrim": "0%",
+        "struct_login_bg_alpha": "50%",
+        "struct_login_bg_blur": "20px",
+        "struct_login_bg_scrim": "0%"
       },
       "typography": {
         "struct_font_sans": "\"Nunito\", \"Lato\", ui-sans-serif, system-ui, sans-serif",

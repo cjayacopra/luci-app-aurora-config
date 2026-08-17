@@ -41,6 +41,12 @@ const LAYOUT_KEYS = [
   "struct_radius_base",
   "struct_content_width_centered",
   "toolbar_enabled",
+  "struct_main_bg_alpha",
+  "struct_main_bg_blur",
+  "struct_main_bg_scrim",
+  "struct_login_bg_alpha",
+  "struct_login_bg_blur",
+  "struct_login_bg_scrim",
 ];
 const TYPOGRAPHY_KEYS = ["struct_font_sans", "struct_font_mono"];
 const STRUCT_KEYS = LAYOUT_KEYS.concat(TYPOGRAPHY_KEYS);
@@ -153,6 +159,22 @@ test("preset structure values stay inside the bounds the hub path enforces", () 
       assert.ok(s[key].length <= 200, `${id}: ${key} too long`);
       assert.match(s[key], /^[A-Za-z0-9 ,"-]+$/, `${id}: ${key} has illegal characters`);
     }
+
+    // Page-background tunables: same bounds is_valid_main_bg_value enforces
+    // on a hub configuration (alpha 50-100%, blur 0-40px, scrim 0-70%). A
+    // preset that could write a value the hub rejects would mean the package
+    // held two different definitions of a valid look.
+    const bg = (key, re, lo, hi) => {
+      assert.match(s[key], re, `${id}: ${key} has illegal characters`);
+      const n = parseInt(s[key], 10);
+      assert.ok(n >= lo && n <= hi, `${id}: ${key} out of range`);
+    };
+    for (const key of ["struct_main_bg_alpha", "struct_login_bg_alpha"])
+      bg(key, /^[0-9]{1,3}%$/, 50, 100);
+    for (const key of ["struct_main_bg_blur", "struct_login_bg_blur"])
+      bg(key, /^[0-9]{1,3}px$/, 0, 40);
+    for (const key of ["struct_main_bg_scrim", "struct_login_bg_scrim"])
+      bg(key, /^[0-9]{1,3}%$/, 0, 70);
   }
 });
 

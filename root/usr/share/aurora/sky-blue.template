@@ -68,6 +68,12 @@ config aurora 'theme'
 	option struct_radius_base '0.75rem'
 	option nav_type 'sidebar'
 	option toolbar_enabled '1'
+	option struct_login_bg_alpha '100%'
+	option struct_login_bg_blur '0px'
+	option struct_login_bg_scrim '0%'
+	option struct_main_bg_alpha '67%'
+	option struct_main_bg_blur '20px'
+	option struct_main_bg_scrim '20%'
 
 config toolbar_item
 	option title 'Overview'

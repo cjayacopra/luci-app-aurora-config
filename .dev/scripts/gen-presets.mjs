@@ -39,6 +39,12 @@ const LAYOUT_KEYS = [
   "struct_radius_base",
   "struct_content_width_centered",
   "toolbar_enabled",
+  "struct_main_bg_alpha",
+  "struct_main_bg_blur",
+  "struct_main_bg_scrim",
+  "struct_login_bg_alpha",
+  "struct_login_bg_blur",
+  "struct_login_bg_scrim",
 ];
 const TYPOGRAPHY_KEYS = ["struct_font_sans", "struct_font_mono"];
 
