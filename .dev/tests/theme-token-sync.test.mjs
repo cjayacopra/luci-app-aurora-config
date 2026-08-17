@@ -110,14 +110,14 @@ test("theme.js cache-busts the token engine with the vendored version", async ()
   assert.equal(stamped, vendored);
 });
 
-// tokens.global.js and color-tokens.conf are vendored from the
-// @eamonxg/luci-theme-tokens package at the version pinned in package.json.
-// Rerun sync-tokens in --check mode and fail on drift, so neither a stale
-// vendor nor a hand-edit can land unnoticed. Falls back to building from the
-// sibling luci-theme-tokens checkout when the registry is unreachable
-// (sync-tokens does this internally); skips only on transient network/server
-// failures -- a 4xx (e.g. 404 for an unpublished pin) means the pin itself is
-// broken and must FAIL, not skip.
+// tokens.global.js and color-tokens.conf are vendored from the ShiranekoWrt
+// luci-theme-tokens fork (the sibling checkout; it carries the shiranekowrt
+// preset, the setguard operator and v3.0.0 that the upstream npm package
+// lacks). Rerun sync-tokens in --check mode and fail on drift, so neither a
+// stale vendor nor a hand-edit can land unnoticed. Without a fork checkout,
+// sync-tokens falls back to the pinned npm version; it skips only on transient
+// network/server failures -- a 4xx (e.g. 404 for an unpublished pin) means the
+// pin itself is broken and must FAIL, not skip.
 test("vendored token artifacts are in sync with the pinned package", async (t) => {
   try {
     await promisify(execFile)(process.execPath, [

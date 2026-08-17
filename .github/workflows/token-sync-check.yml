@@ -1,8 +1,11 @@
 # Drift guard for the vendored color-token artifacts: tokens.global.js,
 # color-tokens.conf, and the preset templates are vendored from the
-# @eamonxg/luci-theme-tokens npm package (published from the luci-theme-tokens
-# repo) at the version pinned in .dev/package.json. This fails when the
-# committed artifacts no longer match the pinned package — run
+# ShiranekoWrt fork of luci-theme-tokens (shiranekowrt/branding branch) — the
+# source of truth that carries the shiranekowrt preset, the setguard operator
+# and v3.0.0. The upstream npm package (@eamonxg/luci-theme-tokens) does NOT
+# contain those, so this workflow checks out the fork as a sibling and
+# validates the committed artifacts against the fork's freshly-built output.
+# This fails when the committed artifacts no longer match — run
 # `cd .dev && node scripts/sync-tokens.mjs` locally and commit to fix.
 name: Token sync check
 
@@ -28,6 +31,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # sync-tokens.mjs resolves the token source as ../luci-theme-tokens
+      # (sibling of this checkout) and builds dist/ from it. dist/ is gitignored
+      # in the fork, so its devDependencies (esbuild, colorjs.io) must be
+      # installed for the build to run.
+      - name: Check out the ShiranekoWrt luci-theme-tokens fork as sibling
+        uses: actions/checkout@v4
+        with:
+          repository: cjayacopra/luci-theme-tokens
+          ref: shiranekowrt/branding
+          path: ../luci-theme-tokens
+
       - uses: pnpm/action-setup@v4
         with:
           version: 10
@@ -38,10 +52,14 @@ jobs:
           cache: pnpm
           cache-dependency-path: .dev/pnpm-lock.yaml
 
+      - name: Install fork build deps
+        run: npm install --no-audit --no-fund
+        working-directory: ../luci-theme-tokens
+
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Check vendored artifacts against the pinned package
+      - name: Check vendored artifacts against the fork build
         run: node scripts/sync-tokens.mjs --check
 
       - name: Run tests

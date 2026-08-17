@@ -1,7 +1,7 @@
-// Vendor the color-token artifacts from the @eamonxg/luci-theme-tokens npm
-// package (renamed from @eamonxg/aurora-tokens; published from the
-// luci-theme-tokens repo). Everything here is a plain copy -- all derivation
-// happens upstream at package build time:
+// Vendor the color-token artifacts from the @eamonxg/luci-theme-tokens package
+// (renamed from @eamonxg/aurora-tokens; published from the luci-theme-tokens
+// repo). Everything here is a plain copy -- all derivation happens at package
+// build time:
 //   - .dev/src/resource/utils/tokens.global.js
 //   - root/usr/share/aurora/color-tokens.conf
 //   - .dev/scripts/aurora-presets.json     (resolved preset hex values)
@@ -9,11 +9,19 @@
 // scripts/gen-presets.mjs. All vendored artifacts are committed; nothing
 // downstream (CI, SDK build, device) needs npm or the package repo.
 //
+// ShiranekoWrt source of truth: this repo is a fork of the eamonxg original.
+// Our branding branch must ship OUR tokens (the shiranekowrt preset, the
+// setguard operator, version 3.0.0), which the upstream npm package does NOT
+// contain. The fork's shiranekowrt/branding branch is therefore the PRIMARY
+// source -- never let the npm registry override it.
+//
 // Source resolution:
-//   1. --local <path>   a local luci-theme-tokens checkout (run `npm install`
-//                       + `node build.mjs` there first)
-//   2. npm registry     the version pinned in package.json devDependencies
-//   3. sibling checkout ../luci-theme-tokens, when the registry is unreachable
+//   1. --local <path>   an explicit luci-theme-tokens checkout (run `npm
+//                       install` + `node build.mjs` there first)
+//   2. sibling checkout ../luci-theme-tokens -- the ShiranekoWrt fork, built
+//                       from its branding branch (shiranekowrt preset etc.)
+//   3. npm registry     LAST RESORT: the version pinned in package.json
+//                       devDependencies (upstream's package, lacks our presets)
 //
 // Usage:  node scripts/sync-tokens.mjs [--local <path>]
 //         node scripts/sync-tokens.mjs --check   exit 1 if outputs are stale
@@ -73,21 +81,28 @@ async function loadPackage() {
     console.log(`sync-tokens: source = local checkout ${explicit}`);
     return buildCheckout(explicit);
   }
+  // The sibling checkout is the ShiranekoWrt fork (branding branch). It is the
+  // source of truth: the upstream npm package does not carry the shiranekowrt
+  // preset or the setguard operator, so npm must NEVER shadow the fork. Only
+  // when the fork is absent (e.g. standalone CI on a clean clone) do we fall
+  // back to the pinned npm version.
+  const sibling = resolve(root, "../luci-theme-tokens");
+  if (existsSync(join(sibling, "build.mjs"))) {
+    console.log(`sync-tokens: source = sibling fork checkout ${sibling}`);
+    return buildCheckout(sibling);
+  }
   const version = pinnedVersion();
   try {
     const dir = await fetchFromRegistry(version);
-    console.log(`sync-tokens: source = npm ${PACKAGE}@${version}`);
+    console.log(`sync-tokens: source = npm ${PACKAGE}@${version} (no fork checkout found)`);
     return dir;
   } catch (error) {
-    const sibling = resolve(root, "../luci-theme-tokens");
-    if (existsSync(join(sibling, "build.mjs"))) {
-      console.warn(
-        `sync-tokens: WARNING registry unavailable (${error.message}); ` +
-          `falling back to sibling checkout -- output may not match the pinned ${version}`,
-      );
-      return buildCheckout(sibling);
-    }
-    throw error;
+    // Deliberately NOT worded as "fetch failed": the token-sync test skips on
+    // transient network failures (HTTP 5xx / ENOTFOUND / ECONNREFUSED) but must
+    // FAIL on a 4xx -- a 404 means the pin is broken, not the network.
+    throw new Error(
+      `no sibling fork checkout (${sibling}) and npm resolution failed: ${error.message}`,
+    );
   }
 }
 

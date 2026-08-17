@@ -4,21 +4,21 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@eamonxg/luci-theme-tokens': link:../../luci-theme-tokens
+
 importers:
 
   .:
     devDependencies:
       '@eamonxg/luci-theme-tokens':
-        specifier: 2.0.0
-        version: 2.0.0
+        specifier: link:../../luci-theme-tokens
+        version: link:../../luci-theme-tokens
       terser:
         specifier: ^5.43.1
         version: 5.49.1
 
 packages:
-
-  '@eamonxg/luci-theme-tokens@2.0.0':
-    resolution: {integrity: sha512-LSPR6fW5iDN0r4eEfLLVirIgjJxUN8L1uJ3hZDHZRPbHtRE8v21pJSMhZoQKerCXUJx3spZc3W3r9f+baw3Jqw==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -44,9 +44,6 @@ packages:
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
 
-  colorjs.io@0.6.1:
-    resolution: {integrity: sha512-8lyR2wHzuIykCpqHKgluGsqQi5iDm3/a2IgP2GBZrasn2sBRkE4NOGsglZxWLs/jZQoNkmA/KM/8NV16rLUdBg==}
-
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
 
@@ -63,10 +60,6 @@ packages:
     hasBin: true
 
 snapshots:
-
-  '@eamonxg/luci-theme-tokens@2.0.0':
-    dependencies:
-      colorjs.io: 0.6.1
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
@@ -90,8 +83,6 @@ snapshots:
   acorn@8.18.0: {}
 
   buffer-from@1.1.2: {}
-
-  colorjs.io@0.6.1: {}
 
   commander@2.20.3: {}
 

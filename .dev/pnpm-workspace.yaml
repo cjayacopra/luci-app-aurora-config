@@ -1,0 +1,12 @@
+# ShiranekoWrt: our tokens, not upstream's.
+#
+# The @eamonxg/luci-theme-tokens npm package is the UPSTREAM release (2.0.0,
+# no shiranekowrt preset, no setguard operator). This repo's branding branch
+# must ship OUR tokens (shiranekowrt preset, setguard, v3.0.0), which only the
+# ShiranekoWrt fork carries. Link the fork checkout as the package source so
+# pnpm never resolves the upstream npm package.
+#
+# The fork's dist/ is gitignored and built on demand by
+# scripts/sync-tokens.mjs (buildCheckout) and node build.mjs in the fork.
+overrides:
+  '@eamonxg/luci-theme-tokens': link:../../luci-theme-tokens

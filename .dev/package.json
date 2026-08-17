@@ -2,7 +2,7 @@
   "name": "luci-app-aurora-config-dev",
   "private": true,
   "type": "module",
-  "description": "Build and test harness. htdocs/luci-static/resources is generated from src/resource by scripts/build-js.mjs -- never edit it by hand. Also pins the @eamonxg/luci-theme-tokens version that scripts/sync-tokens.mjs vendors (and lets Renovate/Dependabot propose bumps).",
+  "description": "Build and test harness. htdocs/luci-static/resources is generated from src/resource by scripts/build-js.mjs -- never edit it by hand. Pins the @eamonxg/luci-theme-tokens version for Renovate/Dependabot, but scripts/sync-tokens.mjs vendors from the ShiranekoWrt fork checkout (../luci-theme-tokens, branding branch) FIRST -- the npm package lacks our shiranekowrt preset + setguard operator. The lockfile stays at whatever npm last served; sync-tokens never reads node_modules, only the fork or the registry tarball.",
   "engines": { "node": ">=20" },
   "scripts": {
     "build": "node scripts/build-js.mjs",
