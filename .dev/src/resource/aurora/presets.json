@@ -303,10 +303,10 @@
         "struct_content_width_centered": "92rem",
         "toolbar_enabled": "1",
         "struct_main_bg_alpha": "50%",
-        "struct_main_bg_blur": "20px",
+        "struct_main_bg_blur": "5px",
         "struct_main_bg_scrim": "0%",
         "struct_login_bg_alpha": "50%",
-        "struct_login_bg_blur": "20px",
+        "struct_login_bg_blur": "5px",
         "struct_login_bg_scrim": "0%"
       },
       "typography": {

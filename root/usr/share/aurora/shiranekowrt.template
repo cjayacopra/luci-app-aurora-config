@@ -78,10 +78,10 @@ config aurora 'theme'
 	option struct_login_bg "url('/luci-static/aurora/images/background.png')"
 	option struct_main_bg "url('/luci-static/aurora/images/background.png')"
 	option struct_login_bg_alpha '50%'
-	option struct_login_bg_blur '20px'
+	option struct_login_bg_blur '5px'
 	option struct_login_bg_scrim '0%'
 	option struct_main_bg_alpha '50%'
-	option struct_main_bg_blur '20px'
+	option struct_main_bg_blur '5px'
 	option struct_main_bg_scrim '0%'
 
 config toolbar_item

@@ -45,7 +45,7 @@ const SWATCH_KEYS = ["bg", "surface", "text", "brand"];
 // LuCI cache-busts the resources it `require`s itself; this fetch is ours, so
 // it has to carry its own stamp. Same reason theme.js appends
 // ?v=TOKENS_ENGINE_VERSION to the token engine.
-const PRESETS_VERSION = "93f22d49";
+const PRESETS_VERSION = "05026fb7";
 
 // Filenames the theme package itself ships into
 // /www/luci-static/aurora/images. Nothing under one of these names is ever
