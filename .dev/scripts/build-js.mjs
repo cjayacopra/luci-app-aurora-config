@@ -54,6 +54,11 @@ async function walk(dir, base = dir) {
     // along the first time this ran and would have been installed onto every
     // router that upgraded.
     if (entry.name.startsWith(".")) continue;
+    // Markdown is documentation, not a shipped resource. It must not be
+    // hashed/copied: AGENTS.md documents __ASSET_HASH(...)__ in prose, and a
+    // stray doc here would otherwise fail --check ("names path, which is not a
+    // source") and could even ship onto the device.
+    if (entry.name.endsWith(".md")) continue;
     const full = join(dir, entry.name);
     if (entry.isDirectory()) found.push(...(await walk(full, base)));
     else found.push(relative(base, full).split("\\").join("/"));
