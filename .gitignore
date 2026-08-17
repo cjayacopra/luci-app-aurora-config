@@ -10,6 +10,7 @@ docs/plans/
 docs/specs/
 docs/superpowers/
 memory/
+.omo/
 
 # Local tooling
 node_modules/
