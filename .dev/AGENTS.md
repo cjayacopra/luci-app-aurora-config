@@ -10,6 +10,7 @@ Host-side build and test harness for luci-app-aurora-config. Sources in `src/res
 - `scripts/` — `build-js.mjs`, `sync-tokens.mjs`, `gen-presets.mjs`, `gen-font-presets.mjs`, `gen-pot.mjs`, `merge-po.mjs`, `translations.json`, `aurora-presets.json`
 - `tests/` — 29 `node:test` suites
 - `package.json` — pnpm scripts; devDeps pin `@eamonxg/luci-theme-tokens` 3.0.0 + terser
+- `pnpm-workspace.yaml` — links `@eamonxg/luci-theme-tokens` to the ShiranekoWrt fork checkout (`../../luci-theme-tokens`); pnpm can never resolve the upstream npm package
 - `.npmrc` — `engine-strict=true`; `engines.node >=20`; `pnpm-lock.yaml` → pnpm is the only package manager
 
 ## WHERE TO LOOK
@@ -28,7 +29,7 @@ Host-side build and test harness for luci-app-aurora-config. Sources in `src/res
 - pnpm only (pnpm-lock.yaml; `engine-strict=true`; node >= 20).
 - `build-js.mjs` is the ONLY writer of `htdocs/`. Never write there from anywhere else.
 - Terser flags are load-bearing: `parse.bare_returns:true` (LuCI views end in a top-level `return`), `compress.directives:false` (dependency declarations are string directives), `format.comments:false` (licenses re-attached from `.license` sidecars). `mangle.toplevel`/`compress.toplevel` must stay at defaults.
-- `@eamonxg/luci-theme-tokens` pinned at 3.0.0 in devDependencies; `sync-tokens.mjs` vendors from that pin.
+- `@eamonxg/luci-theme-tokens` pinned at 3.0.0 in devDependencies and linked to the fork checkout via `pnpm-workspace.yaml`; `sync-tokens.mjs` vendors from the fork checkout FIRST (it carries the shiranekowrt preset + setguard operator the upstream npm package lacks); npm registry is last resort only.
 - `sync-tokens.mjs` stamps `TOKENS_ENGINE_VERSION` into `studio.js` and reruns `gen-presets.mjs`.
 - `gen-presets.mjs` only injects colour lines; layout/typography live in the templates and are read back out. `sync-tokens` overwrites `aurora-presets.json` on every sync, so repo-authored data must live where sync never touches.
 - `translations.json` (217KB) is the hand-maintained i18n source of truth.
@@ -48,7 +49,7 @@ cd .dev                      # all commands run from here
 pnpm build                   # src/resource -> htdocs (terser)
 pnpm check                   # build-js.mjs --check; exits 1 on stale/orphan artifacts
 pnpm test                    # --check first, then node --test tests/*.test.mjs
-pnpm sync-tokens             # vendor tokens.global.js + color-tokens.conf + aurora-presets.json from npm pin; --local <path> for unreleased iteration; --check mode
+pnpm sync-tokens             # vendor tokens.global.js + color-tokens.conf + aurora-presets.json from the fork checkout (../luci-theme-tokens); npm pin last resort; --local <path> for unreleased iteration; --check mode
 pnpm gen-presets             # rewrite *.template colour block + src/resource/aurora/presets.json
 pnpm gen-font-presets        # regenerate font-presets.conf (downloads woff2, computes sha256)
 ```

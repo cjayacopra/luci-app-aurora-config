@@ -1,7 +1,7 @@
 # luci-app-aurora-config — Knowledge Base
 
 **Generated:** 2026-08-17
-**Commit:** ae739e1
+**Commit:** e614796
 **Branch:** shiranekowrt/branding
 
 ## OVERVIEW
@@ -37,7 +37,7 @@ luci-app-aurora-config/
 | Backend RPC | `root/usr/libexec/rpcd/luci.aurora` | POSIX sh + jshn; all `hub_*`, `apply_*`, `upload_*` methods |
 | First-boot setup | `root/etc/uci-defaults/80_aurora` | SCHEMA_VERSION=7; migration + template seeding |
 | Preset templates | `root/usr/share/aurora/*.template` | Colour block GENERATED; layout block hand-authored |
-| Token pipeline | `.dev/scripts/sync-tokens.mjs` → `tokens.global.js`, `color-tokens.conf`, `aurora-presets.json` | Vendored from @eamonxg/luci-theme-tokens npm |
+| Token pipeline | `.dev/scripts/sync-tokens.mjs` → `tokens.global.js`, `color-tokens.conf`, `aurora-presets.json` | Vendored from the ShiranekoWrt fork checkout (`../luci-theme-tokens`, branding branch); npm pin is last resort only |
 | Build pipeline | `.dev/scripts/build-js.mjs` | ONLY writer of htdocs; terser with LuCI-specific flags |
 | Canonical dev doc | `docs/DEVELOPMENT.md` | §1-§11; §11 = jsmin horror story, read before touching build |
 
@@ -49,7 +49,7 @@ luci-app-aurora-config/
 | `runSavePipeline` | fn | `studio.js:2057` | Save chain: colorLibraryReady → editor flush → super.handleSave → persistDerivedTokens → uci.save → writePwaManifest |
 | `toRuntimeColor` | fn | `studio.js:453` | Normalizes any color to hex via vendored Color; wraps in try/catch, returns raw on failure |
 | `colorLibraryReady` | const | `studio.js:65` | Async gate loading `color.global.js` + `tokens.global.js` (versioned via `__ASSET_HASH`/`TOKENS_ENGINE_VERSION`) |
-| `PRESETS` | const | luci-theme-tokens `aurora/presets.js:19` | 6 presets incl. `shiranekowrt` (Kanagawa Lotus cream); resolved upstream, vendored here |
+| `PRESETS` | const | luci-theme-tokens fork `aurora/presets.js:19` | 6 presets incl. `shiranekowrt` (Kanagawa Lotus cream); resolved in the fork build, vendored here |
 | `resolveTokens`/`resolveMode` | fn | luci-theme-tokens `aurora/index.js` | The 5-operator token engine; this repo only consumes prebuilt `dist/aurora/*` |
 | rpcd `list`/`call` dispatch | case | `luci.aurora:2937,3007` | Method table; ACL in `root/usr/share/rpcd/acl.d/luci-app-aurora.json` must match |
 
@@ -87,7 +87,7 @@ cd .dev                      # ALL commands run from here (pnpm; node >= 20, eng
 pnpm build                   # .dev/src/resource/ -> htdocs/luci-static/resources/ (terser)
 pnpm check                   # build-js.mjs --check — names stale/orphan artifacts, exits 1
 pnpm test                    # --check first, then node --test tests/*.test.mjs
-pnpm sync-tokens             # vendor tokens.global.js + color-tokens.conf + presets from npm pin
+pnpm sync-tokens             # vendor tokens.global.js + color-tokens.conf + presets from the fork checkout (../luci-theme-tokens); npm pin last resort
 pnpm gen-presets             # rewrite *.template colour block + src/resource/aurora/presets.json
 pnpm gen-font-presets        # regenerate font-presets.conf (downloads woff2, computes sha256)
 sh -n ../root/usr/libexec/rpcd/luci.aurora   # shell syntax check (not covered by pnpm test)

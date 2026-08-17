@@ -8,7 +8,7 @@ Installed-as-is OpenWrt filesystem overlay for luci-app-aurora-config: the POSIX
 
 ```
 root/
-├── usr/libexec/rpcd/luci.aurora        # Backend: 3929 lines POSIX sh + jshn
+├── usr/libexec/rpcd/luci.aurora        # Backend: 3933 lines POSIX sh + jshn
 ├── etc/uci-defaults/80_aurora          # First-boot: SCHEMA_VERSION=7, migration + template seed
 ├── etc/uci-defaults/81_aurora-fonts    # Font cache migration
 ├── usr/share/aurora/*.template         # 6 UCI presets (default, shiranekowrt, sage-green, amber-sand, monochrome, sky-blue)
