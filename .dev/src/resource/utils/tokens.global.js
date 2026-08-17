@@ -224,7 +224,9 @@ var AuroraTokens = (() => {
         }
         resolved[name] = toOklch(color);
       }
-      for (const name of Object.keys(derivs)) compute(name);
+      for (const name of Object.keys(derivs)) {
+        if (resolved[name] === void 0) compute(name);
+      }
       return resolved;
     };
   }
@@ -329,6 +331,12 @@ var AuroraTokens = (() => {
         bg: "oklch(0.9360 0.0625 101.5859)",
         surface: "oklch(0.8871 0.0773 98.0044)",
         text: "oklch(0.4519 0.0259 285.3160)",
+        // The 0.62/0.48 mix toward the dark cream canvas lifts mid-tone lotus
+        // ink too close to bg (derived muted L 63.6% -> 2.84:1, subtle L 70.4%
+        // -> 2.19:1; WCAG AA needs 4.5:1). These explicit overrides keep the
+        // ink family's plum hue at readable tones: muted 4.61:1, subtle 3.9:1.
+        text_muted: "oklch(0.52 0.02 290)",
+        text_subtle: "oklch(0.56 0.02 290)",
         brand: "oklch(0.5211 0.0862 261.4868)",
         on_brand: "oklch(0.9360 0.0625 101.5859)",
         link: "oklch(0.5211 0.0862 261.4868)",

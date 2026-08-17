@@ -651,6 +651,47 @@ const createColorEditor = (themeConfig, presetColors) => {
     return (presetColors?.[colorOptionName(mode, key)] || "").trim();
   };
 
+  // The editable inputs a derived token's rule (recursively) reads. Presets
+  // may pin derived tokens (shiranekowrt's accessible text_muted on its cream
+  // canvas) that the generic derivation cannot reproduce; while those inputs
+  // are still on the preset, the preset's resolved value is the automatic one.
+  const ancestorInputsOf = (() => {
+    const memo = new Map();
+    const walk = (mode, key, seen) => {
+      const mkey = `${mode}/${key}`;
+      if (memo.has(mkey)) return memo.get(mkey);
+      if (seen.has(mkey)) return new Set();
+      seen.add(mkey);
+      const rule = AuroraTokens.DERIVATIONS?.[mode]?.[key];
+      const ancestors = new Set();
+      if (rule) {
+        for (const arg of rule.slice(1)) {
+          const ref =
+            typeof arg === "string" && arg.startsWith("var:")
+              ? arg.slice(4)
+              : arg;
+          if (typeof ref !== "string") continue;
+          if (AuroraTokens.INPUTS.includes(ref)) ancestors.add(ref);
+          else if (AuroraTokens.DERIVED_KEYS.includes(ref))
+            for (const a of walk(mode, ref, seen)) ancestors.add(a);
+        }
+      }
+      memo.set(mkey, ancestors);
+      return ancestors;
+    };
+    return (mode, key) => walk(mode, key, new Set());
+  })();
+
+  // An input still carries its preset value (empty field = placeholder).
+  const isPresetValue = (mode, key) => {
+    const value = valueFor(mode, key).trim();
+    if (!value) return true;
+    const presetValue = (
+      presetColors?.[colorOptionName(mode, key)] || ""
+    ).trim();
+    return Boolean(presetValue && sameColorValue(value, presetValue));
+  };
+
   const automaticForMode = (mode) => {
     if (typeof AuroraTokens === "undefined") return null;
     const inputs = {};
@@ -660,7 +701,19 @@ const createColorEditor = (themeConfig, presetColors) => {
       inputs[key] = value;
     }
     try {
-      return AuroraTokens.resolve(mode, inputs);
+      const automatic = AuroraTokens.resolve(mode, inputs);
+      // While a derived token's input ancestors are still on the preset, the
+      // preset's own resolved value is the automatic one; once the user edits
+      // any ancestor, the generic derivation takes over again.
+      for (const { key } of DERIVED_COLOR_TOKENS) {
+        const onPreset = [...ancestorInputsOf(mode, key)].every((ancestor) =>
+          isPresetValue(mode, ancestor),
+        );
+        if (!onPreset) continue;
+        const presetValue = presetColors?.[colorOptionName(mode, key)];
+        if (presetValue) automatic[key] = presetValue;
+      }
+      return automatic;
     } catch (_error) {
       return null;
     }

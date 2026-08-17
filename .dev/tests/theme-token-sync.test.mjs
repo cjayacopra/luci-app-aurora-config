@@ -37,10 +37,16 @@ function parseTemplate(source) {
 // (syncDerivedInitialState in view/aurora/studio.js). If a template seeds a
 // derived value that disagrees with that recompute by even one 8-bit step, a
 // clean preset misreads it as a manual override and shows a value in the box.
-// Every stored derived value MUST equal the engine's recompute from the same
-// hex inputs.
+// Two seed kinds are legal: (1) the engine's own recompute from the template's
+// hex inputs, and (2) a preset-pinned override -- the shiranekowrt preset pins
+// accessible text_muted/text_subtle for its cream canvas -- which must match
+// the vendored preset registry (aurora-presets.json) that gen-presets emits
+// the template colour block from.
 test("preset templates seed derived tokens consistent with the engine recompute", async () => {
   const { AuroraTokens, Color } = await loadConfigEngine();
+  const registry = JSON.parse(
+    await readFile(repo(".dev/scripts/aurora-presets.json"), "utf8"),
+  );
   const presetDir = repo("root/usr/share/aurora");
   const files = (await readdir(presetDir)).filter((name) =>
     name.endsWith(".template"),
@@ -48,6 +54,7 @@ test("preset templates seed derived tokens consistent with the engine recompute"
   assert.ok(files.length > 0, "preset templates exist");
 
   for (const file of files) {
+    const name = file.replace(/\.template$/, "");
     const stored = parseTemplate(await readFile(resolve(presetDir, file), "utf8"));
     for (const mode of ["light", "dark"]) {
       const inputs = {};
@@ -59,11 +66,20 @@ test("preset templates seed derived tokens consistent with the engine recompute"
         inputs[key] = stored[mode][key];
       }
       const resolved = AuroraTokens.resolve(mode, inputs);
+      const registryPreset = registry.presets?.[name]?.[mode] ?? {};
       for (const key of AuroraTokens.DERIVED_KEYS) {
+        const seeded = hexOf(Color, stored[mode][key]);
+        const recomputed = hexOf(Color, resolved[key]);
+        if (seeded === recomputed) continue;
+        assert.ok(
+          registryPreset[key],
+          `${file}: ${mode}_${key} seed deviates from the engine recompute ` +
+            "but the preset registry carries no override for it",
+        );
         assert.equal(
-          hexOf(Color, stored[mode][key]),
-          hexOf(Color, resolved[key]),
-          `${file}: ${mode}_${key} seed must match recompute from hex inputs`,
+          seeded,
+          hexOf(Color, registryPreset[key]),
+          `${file}: ${mode}_${key} seed must match the preset registry override`,
         );
       }
     }
