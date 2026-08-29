@@ -5,15 +5,15 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@eamonxg/luci-theme-tokens': link:../../luci-theme-tokens
+  '@eamonxg/luci-theme-tokens': link:../../luci-theme-tokens/packages/tokens
 
 importers:
 
   .:
     devDependencies:
       '@eamonxg/luci-theme-tokens':
-        specifier: link:../../luci-theme-tokens
-        version: link:../../luci-theme-tokens
+        specifier: link:../../luci-theme-tokens/packages/tokens
+        version: link:../../luci-theme-tokens/packages/tokens
       terser:
         specifier: ^5.43.1
         version: 5.49.1

@@ -31,10 +31,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # sync-tokens.mjs resolves the token source as ../luci-theme-tokens
-      # (sibling of this checkout) and builds dist/ from it. dist/ is gitignored
-      # in the fork, so its devDependencies (esbuild, colorjs.io) must be
-      # installed for the build to run.
+      # sync-tokens.mjs resolves the token source as
+      # ../luci-theme-tokens/packages/tokens (the fork is a monorepo; the
+      # tokens package lives at packages/tokens) and builds dist/ from it.
+      # dist/ is gitignored in the fork, so its devDependencies (esbuild,
+      # colorjs.io) must be installed for the build to run.
       - name: Check out the ShiranekoWrt luci-theme-tokens fork as sibling
         uses: actions/checkout@v4
         with:
@@ -53,7 +54,7 @@ jobs:
           cache-dependency-path: .dev/pnpm-lock.yaml
 
       - name: Install fork build deps
-        run: npm install --no-audit --no-fund
+        run: pnpm install --frozen-lockfile
         working-directory: ../luci-theme-tokens
 
       - name: Install

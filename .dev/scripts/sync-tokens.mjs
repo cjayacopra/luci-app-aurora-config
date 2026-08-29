@@ -16,10 +16,13 @@
 // source -- never let the npm registry override it.
 //
 // Source resolution:
-//   1. --local <path>   an explicit luci-theme-tokens checkout (run `npm
-//                       install` + `node build.mjs` there first)
-//   2. sibling checkout ../luci-theme-tokens -- the ShiranekoWrt fork, built
-//                       from its branding branch (shiranekowrt preset etc.)
+//   1. --local <path>   an explicit tokens checkout (a directory containing
+//                       build.mjs + dist/aurora; run `pnpm install` +
+//                       `node build.mjs` there first)
+//   2. sibling checkout ../luci-theme-tokens/packages/tokens -- the
+//                       ShiranekoWrt fork's tokens subpackage (the fork is now
+//                       a monorepo), built from its branding branch
+//                       (shiranekowrt preset etc.)
 //   3. npm registry     LAST RESORT: the version pinned in package.json
 //                       devDependencies (upstream's package, lacks our presets)
 //
@@ -85,8 +88,9 @@ async function loadPackage() {
   // source of truth: the upstream npm package does not carry the shiranekowrt
   // preset or the setguard operator, so npm must NEVER shadow the fork. Only
   // when the fork is absent (e.g. standalone CI on a clean clone) do we fall
-  // back to the pinned npm version.
-  const sibling = resolve(root, "../luci-theme-tokens");
+  // back to the pinned npm version. The fork moved to a monorepo: the tokens
+  // package (build.mjs, dist/aurora, package.json) now lives at packages/tokens.
+  const sibling = resolve(root, "../luci-theme-tokens/packages/tokens");
   if (existsSync(join(sibling, "build.mjs"))) {
     console.log(`sync-tokens: source = sibling fork checkout ${sibling}`);
     return buildCheckout(sibling);
