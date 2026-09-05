@@ -67,7 +67,7 @@ then never treats it as a customisation worth uploading).
 
 ### 1.3 The toolbar
 
-Seven shortcut items, the daily-driver pages of the firmware this ships on:
+Five shortcut items, the daily-driver pages of the firmware this ships on:
 
 | Item | URL | Icon |
 | --- | --- | --- |
@@ -75,13 +75,16 @@ Seven shortcut items, the daily-driver pages of the firmware this ships on:
 | WiFi | `/cgi-bin/luci/admin/network/wireless` | `wifi.svg` |
 | Modemdata | `/cgi-bin/luci/admin/modem/modemdata` | `5G.svg` |
 | QModem | `/cgi-bin/luci/admin/modem/qmodem` | `QModem.svg` |
-| Xray | `/cgi-bin/luci/admin/services/xray_core` | `xray.svg` |
-| Bandix | `/cgi-bin/luci/admin/network/bandix` | `stats.svg` |
 | GHFU | `/cgi-bin/luci/admin/system/ghfu` | `update.svg` |
 
-All seven icons ship with the theme package, so the preset references them by
+All five icons ship with the theme package, so the preset references them by
 name with nothing to upload — and the shipped-names parity test
 (`marketplace-view.test.mjs` vs `is_theme_shipped_image`) keeps it that way.
+
+Xray and Bandix were dropped on purpose: Xray's TPROXY mode mangles packets
+in the firewall, which conflicts with the NSS acceleration path (crypto still
+runs on the CPU), and Bandix offers no benefit. Neither package ships in this
+firmware anymore, so the shortcuts went with them.
 
 ---
 

@@ -341,18 +341,6 @@
           "enabled": "1"
         },
         {
-          "title": "Xray",
-          "url": "/cgi-bin/luci/admin/services/xray_core",
-          "icon": "xray.svg",
-          "enabled": "1"
-        },
-        {
-          "title": "Bandix",
-          "url": "/cgi-bin/luci/admin/network/bandix",
-          "icon": "stats.svg",
-          "enabled": "1"
-        },
-        {
           "title": "GHFU",
           "url": "/cgi-bin/luci/admin/system/ghfu",
           "icon": "update.svg",

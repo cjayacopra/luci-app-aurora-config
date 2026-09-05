@@ -109,18 +109,6 @@ config toolbar_item
 	option enabled '1'
 
 config toolbar_item
-	option title 'Xray'
-	option url '/cgi-bin/luci/admin/services/xray_core'
-	option icon 'xray.svg'
-	option enabled '1'
-
-config toolbar_item
-	option title 'Bandix'
-	option url '/cgi-bin/luci/admin/network/bandix'
-	option icon 'stats.svg'
-	option enabled '1'
-
-config toolbar_item
 	option title 'GHFU'
 	option url '/cgi-bin/luci/admin/system/ghfu'
 	option icon 'update.svg'
