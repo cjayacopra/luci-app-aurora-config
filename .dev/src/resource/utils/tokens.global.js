@@ -334,16 +334,30 @@ var AuroraTokens = (() => {
         // The 0.62/0.48 mix toward the dark cream canvas lifts mid-tone lotus
         // ink too close to bg (derived muted L 63.6% -> 2.84:1, subtle L 70.4%
         // -> 2.19:1; WCAG AA needs 4.5:1). These explicit overrides keep the
-        // ink family's plum hue at readable tones: muted 4.61:1, subtle 3.9:1.
-        text_muted: "oklch(0.52 0.02 290)",
-        text_subtle: "oklch(0.56 0.02 290)",
-        brand: "oklch(0.5211 0.0862 261.4868)",
+        // ink family's plum hue at readable tones. The dashboard/Studio cards
+        // sit on --surface (#e7dba0, darker than bg). The status tones below
+        // are the Kanagawa Lotus palette at AA-floored lightness (pure lotus
+        // values land at 3.4-4.0:1 on the card), so everything passes >= 4.5:1
+        // on the surface card, which also passes on bg/sunken/overlay and on
+        // each status-tinted surface:
+        //   muted/subtle 4.63:1, brand 4.58:1, success 4.65:1, danger 4.64:1,
+        //   info 4.65:1, warning 4.63:1 (all on --surface #e7dba0).
+        text_muted: "oklch(0.485 0.02 290)",
+        text_subtle: "oklch(0.485 0.02 290)",
+        brand: "oklch(0.485 0.0862 261.4868)",
         on_brand: "oklch(0.9360 0.0625 101.5859)",
-        link: "oklch(0.5211 0.0862 261.4868)",
-        info: "oklch(0.5519 0.0399 229.0946)",
-        warning: "oklch(0.7187 0.1628 63.8252)",
-        success: "oklch(0.5951 0.0889 128.2578)",
-        danger: "oklch(0.5976 0.2269 27.6489)"
+        link: "oklch(0.485 0.0862 261.4868)",
+        info: "oklch(0.4828 0.0805 261.9993)",
+        warning: "oklch(0.4835 0.0507 82.0048)",
+        success: "oklch(0.4760 0.0688 128.2110)",
+        danger: "oklch(0.5005 0.1488 16.2867)",
+        // Light tinted surfaces keep the preset's pastel tints -- the floored
+        // lotus hues pass on them (5.45-5.66:1) and on the card floor.
+        info_surface: "#d1f3ff",
+        warning_surface: "#ffead5",
+        success_surface: "#e6f4d7",
+        danger_surface: "#ffe6e1",
+        danger_surface_hover: "#f9d9d4"
       },
       dark: {
         bg: "oklch(0.2025 0.0032 17.4209)",
@@ -352,10 +366,18 @@ var AuroraTokens = (() => {
         brand: "oklch(0.7035 0.0330 228.4233)",
         on_brand: "oklch(0.2025 0.0032 17.4209)",
         link: "oklch(0.7035 0.0330 228.4233)",
-        info: "oklch(0.5978 0.0428 228.3344)",
-        warning: "oklch(0.7827 0.1579 61.6833)",
-        success: "oklch(0.7477 0.1125 128.3621)",
-        danger: "oklch(0.5976 0.2269 27.6489)"
+        info: "oklch(0.7035 0.0330 228.4233)",
+        warning: "oklch(0.6806 0.0599 43.2879)",
+        success: "oklch(0.6999 0.0616 144.8815)",
+        danger: "oklch(0.6446 0.1019 24.8553)",
+        // Dark status tones are the exact Dragon palette. The tinted surfaces
+        // are explicitly fitted so every text-on-surface pair holds >= 4.6:1
+        // (the stock `set` derivation would land dragonRed at ~3.8:1).
+        info_surface: "#123847",
+        warning_surface: "#41280f",
+        success_surface: "#263316",
+        danger_surface: "#391612",
+        danger_surface_hover: "#522723"
       }
     }
   };

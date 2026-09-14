@@ -290,14 +290,14 @@
         "light_bg": "#f2ecbc",
         "light_surface": "#e7dba0",
         "light_text": "#545464",
-        "light_brand": "#4d699b",
+        "light_brand": "#435f90",
         "dark_bg": "#181616",
         "dark_surface": "#282727",
         "dark_text": "#dcd7ba",
         "dark_brand": "#8ba4b0"
       },
       "layout": {
-        "nav_type": "sidebar",
+        "nav_type": "mega-menu",
         "struct_spacing": "0.25rem",
         "struct_radius_base": "0.625rem",
         "struct_content_width_centered": "92rem",
@@ -338,6 +338,12 @@
           "title": "QModem",
           "url": "/cgi-bin/luci/admin/modem/qmodem",
           "icon": "QModem.svg",
+          "enabled": "1"
+        },
+        {
+          "title": "Xray",
+          "url": "/cgi-bin/luci/admin/services/xray_core",
+          "icon": "xray.svg",
           "enabled": "1"
         },
         {
