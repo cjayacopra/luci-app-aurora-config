@@ -30,6 +30,9 @@ const openInbox = () => {
 const update = () =>
   Promise.all([L.require("utils.notices"), L.require("utils.hub-api"), L.require("ui")]).then(
     ([notices, hubApi, ui]) => {
+      // 旧版 hub-api(1.2.5 之前)没有 inbox 缓存;包升级后浏览器可能短暂混用
+      // 新旧模块,这里静默跳过,刷新提示由 marketplace 给出。
+      if (!hubApi.noticesCache || !hubApi.meCache || !hubApi.inboxState) return;
       const count = notices.badgeCount(
         hubApi.noticesCache.getStale(),
         hubApi.meCache.getStale(),
@@ -57,11 +60,12 @@ const update = () =>
 
 const run = () =>
   Promise.all([L.require("utils.notices"), L.require("utils.hub-api")])
-    .then(([notices, hubApi]) =>
-      notices.isDue(hubApi.noticesCheckedAt(), Date.now())
+    .then(([notices, hubApi]) => {
+      if (!hubApi.refreshNotices || !hubApi.noticesCheckedAt) return null;
+      return notices.isDue(hubApi.noticesCheckedAt(), Date.now())
         ? hubApi.refreshNotices().catch(() => null)
-        : null,
-    )
+        : null;
+    })
     .then(update);
 
 return baseclass.extend({

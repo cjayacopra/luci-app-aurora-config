@@ -184,6 +184,13 @@ const callApplyThemePreset = rpc.declare({
 
 const INBOX_NARROW_QUERY = "(max-width:760px)";
 
+// hub-api 的 inbox 能力(noticesCache / meCache / inboxState / setInboxState)
+// 是 1.2.5 才加的。LuCI 的模块 URL 只按 luci-base 的版本取 ?v=,包升级不换
+// URL,所以浏览器可能短暂把新版 marketplace 和旧版 hub-api 混着用 —— 缺成员
+// 时只跳过 inbox 并提示一次刷新,不打断整个页面。
+const HUB_INBOX_OK = !!(hubApi.noticesCache && hubApi.meCache && hubApi.inboxState && hubApi.setInboxState);
+let hubStaleWarned = false;
+
 const maskIcon = (paths, strokeWidth) =>
   "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' " +
   "fill='none' stroke='black' stroke-width='" +
@@ -2250,7 +2257,15 @@ return view.extend({
     // ------------------------------------------------------------------
     // Inbox
 
-    let inboxSnapshot = hubApi.noticesCache.getStale();
+    if (!HUB_INBOX_OK && !hubStaleWarned) {
+      hubStaleWarned = true;
+      ui.addNotification(
+        null,
+        E("p", {}, _("The store was updated on this device — reload the page once to load the new store API.")),
+        "warning",
+      );
+    }
+    let inboxSnapshot = HUB_INBOX_OK ? hubApi.noticesCache.getStale() : null;
     let meData = null;
     let inboxFilter = "all";
     let inboxSel = null;
@@ -2282,7 +2297,7 @@ return view.extend({
 
     const quoted = (name) => "“" + (name || _("Untitled theme")) + "”";
 
-    const inboxItems = () => notices.inbox(inboxSnapshot, meData, hubApi.inboxState());
+    const inboxItems = () => notices.inbox(inboxSnapshot, meData, HUB_INBOX_OK ? hubApi.inboxState() : null);
 
     const SOURCE_LABELS = {
       [notices.SOURCE_ROUTER]: _("This router"),
@@ -2388,6 +2403,7 @@ return view.extend({
     };
 
     const updateInboxState = (next) => {
+      if (!HUB_INBOX_OK) return;
       hubApi.setInboxState(next(hubApi.inboxState()));
       inboxChanged();
     };
@@ -3289,7 +3305,7 @@ return view.extend({
           // 换账号了 —— 缓存里那份档案属于上一个 key。先清掉再刷新,否则
           // "导入成功、随后 hub_me 失败"会把上一个账号的作品留在界面上,
           // 而 Task 2 之后失败路径不再自行清空。
-          hubApi.meCache.clear();
+          if (HUB_INBOX_OK) hubApi.meCache.clear();
           myLoaded = false;
           applyMe(null);
           return refreshMyShares().then(() => {
@@ -4336,7 +4352,7 @@ return view.extend({
 
     // 缓存或 null。null 走空态,不是错误态 —— 一台刚装好的路由器本来就没有
     // 已发布的作品,和"拿不到数据"是两回事。
-    applyMe(hubApi.meCache.getStale());
+    applyMe(HUB_INBOX_OK ? hubApi.meCache.getStale() : null);
     // 从工作台带着发布意图过来,直接落在"我的分享"上,不必再点一次标签。
     selectTab(
       shareIntent
@@ -4359,12 +4375,13 @@ return view.extend({
     // 各自 reconcile,失败则保留当前这帧。
     fetchSort("hot");
     // 打开商店永远两路都刷,不看 preload 的 12 小时节流;hub_me 只跑这一趟。
-    hubApi
-      .refreshNotices({ me: refreshMyShares() })
-      .then((snapshot) => {
-        inboxSnapshot = snapshot;
-        inboxChanged();
-      });
+    if (HUB_INBOX_OK)
+      hubApi
+        .refreshNotices({ me: refreshMyShares() })
+        .then((snapshot) => {
+          inboxSnapshot = snapshot;
+          inboxChanged();
+        });
 
     return rootEl;
   },

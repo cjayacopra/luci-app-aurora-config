@@ -4,6 +4,7 @@ import test from "node:test";
 import { repo, srcPath } from "./paths.mjs";
 
 const SRC = srcPath("view/aurora/marketplace.js");
+const PRELOAD_SRC = srcPath("preload/aurora-notices.js");
 const MENU_SRC = repo("root/usr/share/luci/menu.d/luci-app-aurora.json");
 
 test("gallery view is a browse-only view.extend using hub-api", async () => {
@@ -1728,7 +1729,7 @@ test("inbox: items come from the feed and from hub_me, through the pure module",
   const src = await readFile(SRC, "utf8");
   assert.match(
     src,
-    /const inboxItems = \(\) => notices\.inbox\(inboxSnapshot, meData, hubApi\.inboxState\(\)\);/,
+    /const inboxItems = \(\) => notices\.inbox\(inboxSnapshot, meData, HUB_INBOX_OK \? hubApi\.inboxState\(\) : null\);/,
   );
   assert.match(src, /meData = data \|\| null;/);
   const describe = between(src, "const describeItem", "const inboxChanged");
@@ -1770,7 +1771,34 @@ test("inbox: opening the Marketplace refreshes both sources, whatever the preloa
   assert.match(src, /return myFailed \? null : res\.data;/);
   assert.equal((codeOnly(src).match(/hubApi\.callHubMe\(\)/g) || []).length, 1);
   // First paint comes from the cache the preload shares.
-  assert.match(src, /let inboxSnapshot = hubApi\.noticesCache\.getStale\(\);/);
+  assert.match(src, /let inboxSnapshot = HUB_INBOX_OK \? hubApi\.noticesCache\.getStale\(\) : null;/);
+});
+
+test("inbox: a stale pre-1.2.5 hub-api degrades to a refresh hint instead of throwing", async () => {
+  const src = await readFile(SRC, "utf8");
+  // The inbox surface appeared in 1.2.5. LuCI versions module URLs only by
+  // luci-base, so an upgrade can briefly mix the new marketplace with an old
+  // hub-api; the guard is computed once, at module scope.
+  assert.match(
+    src,
+    /const HUB_INBOX_OK = !!\(hubApi\.noticesCache && hubApi\.meCache && hubApi\.inboxState && hubApi\.setInboxState\);/,
+  );
+  // Every read site degrades to null / no-op behind the guard.
+  assert.match(src, /let inboxSnapshot = HUB_INBOX_OK \? hubApi\.noticesCache\.getStale\(\) : null;/);
+  assert.match(src, /notices\.inbox\(inboxSnapshot, meData, HUB_INBOX_OK \? hubApi\.inboxState\(\) : null\)/);
+  assert.match(src, /applyMe\(HUB_INBOX_OK \? hubApi\.meCache\.getStale\(\) : null\);/);
+  assert.match(src, /const updateInboxState = \(next\) => \{\s*if \(!HUB_INBOX_OK\) return;/);
+  assert.match(src, /if \(HUB_INBOX_OK\) hubApi\.meCache\.clear\(\);/);
+  // The hint fires at most once per page load.
+  assert.match(src, /if \(!HUB_INBOX_OK && !hubStaleWarned\) \{\s*hubStaleWarned = true;/);
+  assert.match(src, /_\("The store was updated on this device — reload the page once to load the new store API\."\)/);
+  // The boot refresh is guarded too: an unguarded refreshNotices() would throw
+  // synchronously inside render() and take the whole page down.
+  assert.match(src, /if \(HUB_INBOX_OK\)\s*hubApi\s*\.refreshNotices\(\{ me: refreshMyShares\(\) \}\)/);
+  // The preload mirrors the guard: no badge, no throw, the hint is the view's job.
+  const pre = await readFile(PRELOAD_SRC, "utf8");
+  assert.match(pre, /if \(!hubApi\.noticesCache \|\| !hubApi\.meCache \|\| !hubApi\.inboxState\) return;/);
+  assert.match(pre, /if \(!hubApi\.refreshNotices \|\| !hubApi\.noticesCheckedAt\) return null;/);
 });
 
 test("inbox: J/K/E/U only on the Inbox tab, never inside a field, never with a modifier", async () => {
